@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "cat .env._local > .env.local && next dev",
     "dev:prod": "cat .env._prod > .env.local && next dev",
-    "build": "cat .env._local > .env.local && next build",
+    "build:local": "cat .env._local > .env.local && next build",
     "build:prod": "cat .env._prod > .env.local && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
