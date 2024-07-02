@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "cat .env._local > .env.local && next dev",
+    "dev:prod": "cat .env._prod > .env.local && next dev",
+    "build": "cat .env._local > .env.local && next build",
+    "build:prod": "cat .env._prod > .env.local && next build",
     "start": "next start",
     "lint": "next lint"
   },

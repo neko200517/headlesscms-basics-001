@@ -12,8 +12,7 @@ export async function getStaticProps({
 }) {
   const postData = await getSinglePost(params.postSlug);
 
-  let featureImageUrl =
-    'http://localhost:8000/wp-content/uploads/2024/06/travel-photos.jpg';
+  let featureImageUrl = '/next.svg';
 
   if (postData.featuredImage) {
     if (postData.featuredImage.node.mediaDetails.sizes[0].sourceUrl) {
@@ -22,7 +21,11 @@ export async function getStaticProps({
         postData.featuredImage.node.mediaDetails.sizes.reduce((prev, current) =>
           parseInt(prev.width) > parseInt(current.width) ? prev : current
         );
-      featureImageUrl = largestImage.sourceUrl;
+      featureImageUrl = `${
+        process.env.NEXT_PUBLIC_WP_BASE_URL
+          ? process.env.NEXT_PUBLIC_WP_BASE_URL
+          : ''
+      }${largestImage.sourceUrl}`;
     }
   }
 

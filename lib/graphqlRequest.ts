@@ -1,7 +1,7 @@
 export default async function graphqlRequest(query: {
   query: string;
 }): Promise<{ data: any }> {
-  const url = 'http://localhost:8000/graphql';
+  const url = process.env.NEXT_PUBLIC_WP_GRAPHQL_URL!;
   const headers = { 'Content-Type': 'application/json' };
 
   const res = await fetch(url, {
