@@ -2,32 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .post-content p {
+    @apply pb-4 text-lg;
+  }
+  .post-content a {
+    @apply underline text-blue-400 hover:text-blue-600;
+  }
+  .post-content ul {
+    @apply pb-4 list-disc list-inside text-yellow-600 text-xl;
+  }
+  .post-content figure {
+    @apply pb-4;
+  }
+  .post-content figure figcaption {
+    @apply text-center py-2;
+  }
+  .post-content h1 {
+    @apply text-3xl font-bold py-4;
+  }
+  .post-content h2 {
+    @apply text-2xl font-bold py-4;
+  }
+  .post-content h3 {
+    @apply text-xl font-bold py-4;
+  }
+  .contact-form label {
+    @apply block w-full mb-4;
+  }
+  .contact-form input,
+  .contact-form textarea {
+    @apply block border focus:outline-none focus:ring focus:ring-yellow-300
+    focus:ring-offset-2 focus:ring-opacity-50 w-full mb-4 p-2 rounded;
+  }
+  .contact-form button {
+    @apply inline-block bg-green-500 focus:outline-none focus:ring focus:ring-yellow-300
+    focus:ring-offset-2 focus:ring-opacity-50 mb-4 p-3 text-slate-100 text-xl
+    hover:bg-green-600 active:bg-green-700 rounded;
   }
 }
