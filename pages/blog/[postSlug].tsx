@@ -4,14 +4,13 @@ import SiteFooter from '@/components/SiteFooter';
 import { getPostSlugs, getSinglePost } from '@/lib/posts';
 import { SinglePost } from '@/types/post';
 import Date from '@/components/Date';
+import CommentForm from '@/components/CommentForm';
+import { getComments } from '@/lib/comments';
+import { GetCommentNode } from '@/types/comment';
+import { AppConfig } from '@/config/const';
+import useSWR from 'swr';
 
-export async function getStaticProps({
-  params,
-}: {
-  params: { postSlug: string };
-}) {
-  const postData = await getSinglePost(params.postSlug);
-
+const getFeatureImageUrl = (postData: SinglePost) => {
   let featureImageUrl = '/next.svg';
 
   if (postData.featuredImage) {
@@ -28,12 +27,24 @@ export async function getStaticProps({
       }${largestImage.sourceUrl}`;
     }
   }
+  return featureImageUrl;
+};
+
+export async function getStaticProps({
+  params,
+}: {
+  params: { postSlug: string };
+}) {
+  const staticPostData = await getSinglePost(params.postSlug);
+  const staticCommentData = await getComments(params.postSlug);
 
   return {
     props: {
-      postData,
-      featureImageUrl: `url(${featureImageUrl})`,
+      staticPostData,
+      staticCommentData,
+      params,
     },
+    // revalidate: AppConfig.REVALIDATE_SEC,
   };
 }
 
@@ -47,17 +58,53 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 }
 
 export default function Post({
-  postData,
-  featureImageUrl,
+  staticPostData,
+  staticCommentData,
+  params,
 }: {
-  postData: SinglePost;
-  featureImageUrl: string;
+  staticPostData: SinglePost;
+  staticCommentData: {
+    commentCount: number;
+    comments: GetCommentNode;
+  };
+  params: { postSlug: string };
 }) {
+  const postData = staticPostData;
+  const imgUrl = getFeatureImageUrl(postData);
+  const featureImageUrl = `url(${imgUrl})`;
+  const { commentCount, comments } = staticCommentData;
+
+  // // post
+  // const { data: postData, error: postError } = useSWR(
+  //   ['post', params.postSlug],
+  //   ([_, slug]) => getSinglePost(slug),
+  //   { fallbackData: staticPostData }
+  // );
+
+  // if (postError) return <div>{postError}</div>;
+  // if (!postData) return <div>Loading...</div>;
+
+  // // featureImageUrl
+  // const imgUrl = getFeatureImageUrl(postData);
+  // const featureImageUrl = `url(${imgUrl})`;
+
+  // // comment
+  // const { data: commentData, error: commentError } = useSWR(
+  //   ['comment', params.postSlug],
+  //   ([_, slug]) => getComments(slug),
+  //   { fallbackData: staticCommentData }
+  // );
+
+  // if (commentError) return <div>{commentError}</div>;
+  // if (!commentData) return <div>Loading...</div>;
+
+  // const { commentCount, comments } = commentData;
+
   return (
     <>
       <Head>
@@ -101,6 +148,41 @@ export default function Post({
           />
         </section>
       </article>
+      <div className='container mx-auto lg:max-w-4xl'>
+        <CommentForm postId={postData.databaseId}></CommentForm>
+      </div>
+
+      <div className='container mx-auto lg:max-w-4xl'>
+        <section>
+          <h3 className='text-xl py-2 my-4 pl-4 border-l-4 border-l-lime-300'>
+            {commentCount ? commentCount : 'No'} comments on this Post so far:
+          </h3>
+          <ul>
+            {comments.nodes.map((comment) => (
+              <li key={comment.id} className='pb-4 border-b'>
+                <div className='comment-header flex justify-start items-center'>
+                  <div className='py-4'>
+                    <img
+                      src={comment.author.node.avatar.url}
+                      alt={comment.author.node.name}
+                      className='rounded-full max-w-[50px] mr-4'
+                    />
+                  </div>
+                  <div>
+                    <div className='font-bold'>{comment.author.node.name}</div>
+                    <div className='text-sm'>
+                      <Date dateString={comment.date} />
+                    </div>
+                  </div>
+                </div>
+                <div className='comment-body pl-[66px]'>
+                  <div dangerouslySetInnerHTML={{ __html: comment.content }} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </>
   );
 }

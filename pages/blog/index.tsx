@@ -8,6 +8,7 @@ import FeaturedImage from '@/components/FeaturedImage';
 import SiteFooter from '@/components/SiteFooter';
 import Date from '@/components/Date';
 import LoadMore from '@/components/LoadMore';
+import { AppConfig } from '@/config/const';
 
 export async function getStaticProps() {
   const postList = await getPostList();
@@ -16,6 +17,7 @@ export async function getStaticProps() {
     props: {
       postList: postList,
     },
+    // revalidate: AppConfig.REVALIDATE_SEC,
   };
 }
 

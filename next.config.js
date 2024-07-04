@@ -13,6 +13,10 @@ module.exports = {
         // port: '443',
         // pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'secure.gravatar.com',
+      },
     ],
   },
 };

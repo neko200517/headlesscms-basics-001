@@ -1,8 +1,20 @@
+type RequestHeader = {
+  'Content-Type': string;
+  Authorization?: string;
+};
+
 export default async function graphqlRequest(query: {
   query: string;
-}): Promise<{ data: any }> {
+}): Promise<any> {
   const url = process.env.NEXT_PUBLIC_WP_GRAPHQL_URL!;
-  const headers = { 'Content-Type': 'application/json' };
+  let headers: RequestHeader = { 'Content-Type': 'application/json' };
+
+  if (process.env.NEXT_PUBLIC_WP_AUTH_REFRESH_TOKEN) {
+    headers = {
+      ...headers,
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_WP_AUTH_REFRESH_TOKEN}`,
+    };
+  }
 
   const res = await fetch(url, {
     headers,

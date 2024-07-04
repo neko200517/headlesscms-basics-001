@@ -4,4 +4,7 @@ export const AppConfig = {
 
   // image
   IMAGE_BASE_URL: 'https://wordpress-20240702.azurewebsites.net',
+
+  // revalidate
+  REVALIDATE_SEC: 10,
 };

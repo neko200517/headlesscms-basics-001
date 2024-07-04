@@ -8,6 +8,7 @@ import { getCategoryDetail, getCategorySlugs, getPostList } from '@/lib/posts';
 import { CategoryDetail, PostList } from '@/types/post';
 import { useEffect, useState } from 'react';
 import Date from '@/components/Date';
+import { AppConfig } from '@/config/const';
 
 export async function getStaticPaths() {
   const categorySlugs = await getCategorySlugs();
@@ -37,6 +38,7 @@ export async function getStaticProps({
       categoryPosts,
       categoryDetail,
     },
+    // revalidate: AppConfig.REVALIDATE_SEC,
   };
 }
 

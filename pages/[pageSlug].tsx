@@ -3,6 +3,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
 import { getPageSlugs, getSinglePage } from '@/lib/pages';
 import { SinglePage } from '@/types/page';
+import { AppConfig } from '@/config/const';
 
 export async function getStaticProps({
   params,
@@ -15,6 +16,7 @@ export async function getStaticProps({
     props: {
       pageData,
     },
+    // revalidate: AppConfig.REVALIDATE_SEC,
   };
 }
 

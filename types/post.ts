@@ -40,6 +40,7 @@ export type SinglePost = {
   modified: string;
   slug: string;
   title: string;
+  databaseId: number;
   featuredImage: {
     node: {
       mediaDetails: {

@@ -73,6 +73,7 @@ export async function getSinglePost(slug: string): Promise<SinglePost> {
         modified
         slug
         title(format: RENDERED)
+        databaseId
         featuredImage {
           node {
             mediaDetails {
