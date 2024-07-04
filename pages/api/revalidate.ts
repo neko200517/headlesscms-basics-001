@@ -39,7 +39,8 @@ export default async function handler(
   } = req;
 
   if (
-    req.headers.authorization !== `Bearer ${process.env.REVALIDATE_SECRET_KEY}`
+    req.headers.authorization !==
+    `Bearer ${process.env.NEXT_PUBLIC_REVALIDATION_SECRET}`
   ) {
     return res.status(401).json({ message: 'Invalid token' });
   }
