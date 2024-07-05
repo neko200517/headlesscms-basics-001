@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 }
 
@@ -38,7 +38,7 @@ export async function getStaticProps({
       categoryPosts,
       categoryDetail,
     },
-    // revalidate: AppConfig.REVALIDATE_SEC,
+    revalidate: AppConfig.REVALIDATE_VERY_FAST,
   };
 }
 

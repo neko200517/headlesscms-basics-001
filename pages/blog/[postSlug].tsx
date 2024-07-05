@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { SiteHeader } from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
 import { getPostSlugs, getSinglePost } from '@/lib/posts';
@@ -7,8 +6,23 @@ import Date from '@/components/Date';
 import CommentForm from '@/components/CommentForm';
 import { getComments } from '@/lib/comments';
 import { GetCommentNode } from '@/types/comment';
-import { AppConfig } from '@/config/const';
 import useSWR from 'swr';
+import { AppConfig } from '@/config/const';
+import { Rubik, Roboto_Slab } from 'next/font/google';
+import { getSeo } from '@/lib/seo';
+import { SeoPost } from '@/types/seo';
+import { getImageUrl } from '@/utils/utils';
+import SeoHead from '@/components/SeoHead';
+
+const rubik = Rubik({
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const roboto_slub = Roboto_Slab({
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 const getFeatureImageUrl = (postData: SinglePost) => {
   let featureImageUrl = '/next.svg';
@@ -20,11 +34,7 @@ const getFeatureImageUrl = (postData: SinglePost) => {
         postData.featuredImage.node.mediaDetails.sizes.reduce((prev, current) =>
           parseInt(prev.width) > parseInt(current.width) ? prev : current
         );
-      featureImageUrl = `${
-        process.env.NEXT_PUBLIC_WP_BASE_URL
-          ? process.env.NEXT_PUBLIC_WP_BASE_URL
-          : ''
-      }${largestImage.sourceUrl}`;
+      featureImageUrl = getImageUrl(largestImage.sourceUrl);
     }
   }
   return featureImageUrl;
@@ -37,14 +47,16 @@ export async function getStaticProps({
 }) {
   const staticPostData = await getSinglePost(params.postSlug);
   const staticCommentData = await getComments(params.postSlug);
+  const seoData = await getSeo('post', params.postSlug);
 
   return {
     props: {
       staticPostData,
       staticCommentData,
+      seoData,
       params,
     },
-    // revalidate: AppConfig.REVALIDATE_SEC,
+    revalidate: AppConfig.REVALIDATE_1HOUR,
   };
 }
 
@@ -65,6 +77,7 @@ export async function getStaticPaths() {
 export default function Post({
   staticPostData,
   staticCommentData,
+  seoData,
   params,
 }: {
   staticPostData: SinglePost;
@@ -72,53 +85,50 @@ export default function Post({
     commentCount: number;
     comments: GetCommentNode;
   };
+  seoData: SeoPost;
   params: { postSlug: string };
 }) {
-  const postData = staticPostData;
+  const fetcherPost = ([_, slug1]: [string, string]) => getSinglePost(slug1);
+  const fetcherComment = ([_, slug2]: [string, string]) => getComments(slug2);
+
+  // post
+  const { data: postData } = useSWR(['post', params.postSlug], fetcherPost, {
+    fallbackData: staticPostData,
+  });
+
+  // comment
+  const { data: commentData } = useSWR(
+    ['comment', [params.postSlug]],
+    fetcherComment,
+    {
+      fallbackData: staticCommentData,
+    }
+  );
+
+  // featureImageUrl
   const imgUrl = getFeatureImageUrl(postData);
   const featureImageUrl = `url(${imgUrl})`;
-  const { commentCount, comments } = staticCommentData;
 
-  // // post
-  // const { data: postData, error: postError } = useSWR(
-  //   ['post', params.postSlug],
-  //   ([_, slug]) => getSinglePost(slug),
-  //   { fallbackData: staticPostData }
-  // );
+  // comment
+  const { commentCount, comments } = commentData;
 
-  // if (postError) return <div>{postError}</div>;
-  // if (!postData) return <div>Loading...</div>;
-
-  // // featureImageUrl
-  // const imgUrl = getFeatureImageUrl(postData);
-  // const featureImageUrl = `url(${imgUrl})`;
-
-  // // comment
-  // const { data: commentData, error: commentError } = useSWR(
-  //   ['comment', params.postSlug],
-  //   ([_, slug]) => getComments(slug),
-  //   { fallbackData: staticCommentData }
-  // );
-
-  // if (commentError) return <div>{commentError}</div>;
-  // if (!commentData) return <div>Loading...</div>;
-
-  // const { commentCount, comments } = commentData;
+  if (!postData || !commentData) return <div>Loading...</div>;
 
   return (
     <>
-      <Head>
-        <title key={postData.slug}>{postData.title}</title>
-        <meta
-          name='description'
-          content={postData.excerpt}
-          key='metadescription'
-        />
-      </Head>
+      <SeoHead pathname='/blog' seoData={seoData}>
+        <style>
+          {`
+              .post-content ul {
+                font-family: ${roboto_slub.style.fontFamily}
+              }
+            `}
+        </style>
+      </SeoHead>
       <section className='bg-slate-700 bg-opacity-70 absolute w-full z-20'>
         <SiteHeader className='header-single-post z-10 relative' />
       </section>
-      <article>
+      <article className={`${rubik.className}`}>
         <section
           className={`hero-area h-[60vh] min-h-[30rem] bg-no-repeat bg-cover bg-center relative`}
           style={{ backgroundImage: featureImageUrl }}
@@ -126,7 +136,9 @@ export default function Post({
           <div className='absolute inset-0 bg-slate-900 opacity-40' />
 
           <div className='container mx-auto h-full flex flex-col justify-center lg:max-w-4xl'>
-            <h1 className='text-6xl text-center text-slate-100 relative z-10 py-8 mt-12'>
+            <h1
+              className={`text-6xl text-center text-slate-100 relative z-10 py-8 mt-12 ${roboto_slub.className}`}
+            >
               {postData.title}
             </h1>
 

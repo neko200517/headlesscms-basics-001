@@ -16,7 +16,7 @@ export async function getStaticProps({
     props: {
       pageData,
     },
-    // revalidate: AppConfig.REVALIDATE_SEC,
+    revalidate: AppConfig.REVALIDATE_1DAY,
   };
 }
 

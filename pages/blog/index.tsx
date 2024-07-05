@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
@@ -15,9 +15,9 @@ export async function getStaticProps() {
 
   return {
     props: {
-      postList: postList,
+      postList,
     },
-    // revalidate: AppConfig.REVALIDATE_SEC,
+    revalidate: AppConfig.REVALIDATE_VERY_FAST,
   };
 }
 

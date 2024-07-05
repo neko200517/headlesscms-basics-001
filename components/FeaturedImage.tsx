@@ -1,5 +1,6 @@
 import { AppConfig } from '@/config/const';
 import { PostNode } from '@/types/post';
+import { getImageUrl } from '@/utils/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -17,11 +18,7 @@ export default function FeaturedImage({ post }: { post: PostNode }) {
   if (post.featuredImage) {
     let size = post.featuredImage.node.mediaDetails.sizes[0];
     img = {
-      src: `${
-        process.env.NEXT_PUBLIC_WP_BASE_URL
-          ? process.env.NEXT_PUBLIC_WP_BASE_URL
-          : ''
-      }${size.sourceUrl}`,
+      src: getImageUrl(size.sourceUrl),
       width: Number(size.width),
       height: Number(size.height),
     };
