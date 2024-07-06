@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export function SiteHeader({ className }: { className: string }) {
+export default function SiteHeader({ className }: { className: string }) {
   return (
     <header
       className={`container mx-auto lg:max-w-4xl flex items-center justify-between ${className}`}

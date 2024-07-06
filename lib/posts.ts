@@ -1,19 +1,19 @@
-import { PostList, SinglePost } from '@/types/post';
+import { CategoryDetail, PostList, SinglePost } from '@/types/post';
 import graphqlRequest from './graphqlRequest';
-import { AppConfig } from '@/config/const';
+import { AppConfig } from '@/config/AppConfig';
 
 export async function getPostList(
-  endCursor: string | null = null,
-  taxonomy: { key: string; value: string } | null = null
+  endCursor: string | null | undefined = null,
+  taxonomy: { key: string; value: string } | null | undefined = null
 ): Promise<PostList> {
   let condition = `
-    after: "${endCursor}", first: 5,
+    after: "${endCursor}", first: ${AppConfig.MAX_NUMBER_PER_PAGE},
     where: {orderby: {field: DATE, order: DESC}}
   `;
 
   if (taxonomy) {
     condition = `
-      after: "${endCursor}", first: 5,
+      after: "${endCursor}", first: ${AppConfig.MAX_NUMBER_PER_PAGE},
       where: {orderby: {field: DATE, order: DESC},
       ${taxonomy.key}: "${taxonomy.value}"}
     `;
@@ -140,7 +140,9 @@ export async function getCategorySlugs(): Promise<{ slug: string }[]> {
   return allCategorySlugs;
 }
 
-export async function getCategoryDetail(categorySlug: string) {
+export async function getCategoryDetail(
+  categorySlug: string
+): Promise<CategoryDetail> {
   const query = {
     query: `query getCategoryDetail {
       category(id: "${categorySlug}", idType: SLUG) {

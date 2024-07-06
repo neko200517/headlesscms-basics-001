@@ -1,4 +1,3 @@
-import { AppConfig } from '@/config/const';
 import { PostNode } from '@/types/post';
 import { getImageUrl } from '@/utils/utils';
 import Image from 'next/image';

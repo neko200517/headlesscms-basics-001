@@ -4,6 +4,7 @@ export const AppConfig = {
 
   // revalidate
   REVALIDATE_VERY_FAST: 10,
+  REVALIDATE_1MIN: 60,
   REVALIDATE_1HOUR: 3600,
   REVALIDATE_1DAY: 86400,
   REVALIDATE_1WEEK: 604800,
@@ -11,4 +12,7 @@ export const AppConfig = {
 
   // Google検索から除外
   NO_INDEX: true,
+
+  // 1ページの最大数
+  MAX_NUMBER_PER_PAGE: 5,
 };

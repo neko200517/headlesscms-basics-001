@@ -20,7 +20,7 @@ export async function getSeo(
           opengraphImage {
             mediaItemUrl
           }
-          opengraphTitle
+          opengraphType
           opengraphSiteName
         }
       }

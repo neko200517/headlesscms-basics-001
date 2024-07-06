@@ -1,20 +1,16 @@
-import { SiteHeader } from '@/components/SiteHeader';
-import Head from 'next/head';
+import SiteHeader from '@/components/SiteHeader';
 import Link from 'next/link';
+
+export const metadata = {
+  title: 'Welcome to CoolNomad Travel Blog',
+  description: 'coolnomad travel blog - read our travel stories',
+};
 
 export default function Home() {
   return (
     <>
-      <Head>
-        <title key='pagetitle'>Welcome to CoolNomad Travel Blog</title>
-        <meta
-          name='description'
-          content='coolnomad travel blog - read our travel stories'
-          key='metadescription'
-        />
-      </Head>
       <div className="min-h-screen bg-[url('/home.jpg')] relative">
-        <div className='absolute bg-slate-900 inset-0 z-0 opacity-40'></div>
+        <div className='absolute bg-slate-900 inset-0 z-0 opacity-40' />
         <SiteHeader className='z-10 relative' />
         <main>
           <div className='min-h-[50vh] flex flex-col items-center justify-center z-10 relative'>

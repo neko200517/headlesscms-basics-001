@@ -1,19 +1,26 @@
-import { FormEvent, useState } from 'react';
+'use client';
 
-export default function CommentForm({ postId }: { postId: number }) {
+import { FormEvent, useState } from 'react';
+import SubmissionAlert from './SubmissionAlert';
+import { mutate } from 'swr';
+
+export default function CommentForm({
+  postId,
+  slug,
+}: {
+  postId: number;
+  slug: string;
+}) {
   const [auther, setAutor] = useState('');
   const [authourEmail, setAuthorEmail] = useState('');
   const [content, setContent] = useState('');
-  const [id, setId] = useState(postId);
 
-  const [submitStatus, setSubmitStatus] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const [alertColor, setAlertColor] = useState('bg-green-500');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setSubmitStatus(true);
     setResponseMessage('Your comment is being submitted...');
     setAlertColor('bg-yellow-500');
 
@@ -21,7 +28,7 @@ export default function CommentForm({ postId }: { postId: number }) {
       author: auther,
       authorEmail: authourEmail,
       content: content.replace(/\n/g, '\\n'),
-      postId: id,
+      postId,
     };
 
     const response = await fetch(`/api/comment`, {
@@ -41,6 +48,7 @@ export default function CommentForm({ postId }: { postId: number }) {
       setAutor('');
       setAuthorEmail('');
       setContent('');
+      mutate(slug); // cache refresh
     } else {
       setAlertColor('bg-red-500');
     }
@@ -84,10 +92,10 @@ export default function CommentForm({ postId }: { postId: number }) {
 
         <button type='submit'>submit</button>
 
-        {submitStatus && (
-          <div className={`${alertColor} py-2 px-4 text-slate-100 rounded-md`}>
+        {responseMessage && (
+          <SubmissionAlert alertColor={alertColor}>
             {responseMessage}
-          </div>
+          </SubmissionAlert>
         )}
       </form>
     </>

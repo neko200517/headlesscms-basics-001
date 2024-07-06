@@ -1,3 +1,5 @@
+import { AppConfig } from '@/config/AppConfig';
+
 type RequestHeader = {
   'Content-Type': string;
   Authorization?: string;
@@ -20,6 +22,7 @@ export default async function graphqlRequest(query: {
     headers,
     method: 'POST',
     body: JSON.stringify(query),
+    next: { revalidate: AppConfig.REVALIDATE_1MIN },
   });
 
   const reJson = await res.json();
